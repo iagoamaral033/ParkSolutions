@@ -1,0 +1,385 @@
+﻿@page "/Historico"
+
+<PageTitle>Histórico</PageTitle>
+
+<div class="hist-page">
+
+    <!-- Header -->
+    <div class="page-header">
+        <div>
+            <h4 class="page-title">
+                <span class="bi bi-clock-history me-2" style="color:#2563eb;"></span>
+                Histórico
+            </h4>
+            <span class="page-subtitle">Registro de todas as entradas e saídas</span>
+        </div>
+        <button class="btn-export">
+            <span class="bi bi-download me-1"></span> Exportar
+        </button>
+    </div>
+
+    <!-- Metrics -->
+    <div class="metrics-row">
+        <div class="mcard">
+            <div class="mcard-val" style="color:#2563eb;">@registros.Count</div>
+            <div class="mcard-label">Total de Registros</div>
+        </div>
+        <div class="mcard">
+            <div class="mcard-val" style="color:#22c55e;">@registros.Count(r => r.Status == "Finalizado")</div>
+            <div class="mcard-label">Finalizados</div>
+        </div>
+        <div class="mcard">
+            <div class="mcard-val" style="color:#f97316;">@registros.Count(r => r.Status == "Em andamento")</div>
+            <div class="mcard-label">Em Andamento</div>
+        </div>
+        <div class="mcard">
+            <div class="mcard-val" style="color:#22c55e;">
+                R$ @registros.Where(r => r.Status == "Finalizado").Sum(r => r.Valor).ToString("F2")
+            </div>
+            <div class="mcard-label">Faturamento Total</div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filter-bar">
+        <div class="search-box">
+            <span class="bi bi-search" style="color:#8888aa;font-size:14px;"></span>
+            <input type="text" placeholder="Buscar placa ou veículo..."
+                   @bind="filtro" @bind:event="oninput" />
+        </div>
+        <select class="fselect" @bind="filtroStatus">
+            <option value="">Todos os status</option>
+            <option value="Finalizado">Finalizado</option>
+            <option value="Em andamento">Em andamento</option>
+        </select>
+        <select class="fselect" @bind="filtroTipo">
+            <option value="">Todos os tipos</option>
+            <option value="Carro">Carro</option>
+            <option value="Moto">Moto</option>
+            <option value="Caminhonete">Caminhonete</option>
+            <option value="Van">Van</option>
+        </select>
+    </div>
+
+    <!-- Tabela -->
+    <div class="table-card">
+        <table class="hist-table">
+            <thead>
+                <tr>
+                    <th>Placa</th>
+                    <th>Tipo</th>
+                    <th>Vaga</th>
+                    <th>Entrada</th>
+                    <th>Saída</th>
+                    <th>Duração</th>
+                    <th>Valor</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in RegistrosFiltrados)
+                {
+                    <tr>
+                        <td><span class="placa-badge">@r.Placa</span></td>
+                        <td>
+                            <span class="tipo-badge @r.Tipo.ToLower()">
+                                <span class="bi @IconeTipo(r.Tipo) me-1"></span>@r.Tipo
+                            </span>
+                        </td>
+                        <td style="color:#8888aa;font-size:13px;">@r.Vaga</td>
+                        <td class="td-time">@r.Entrada.ToString("dd/MM HH:mm")</td>
+                        <td class="td-time">
+                            @(r.Saida.HasValue ? r.Saida.Value.ToString("dd/MM HH:mm") : "—")
+                        </td>
+                        <td style="color:#4a7fff;font-size:13px;font-weight:600;">@r.Duracao</td>
+                        <td style="color:#22c55e;font-size:13px;font-weight:700;">
+                            @(r.Status == "Finalizado" ? "R$ " + r.Valor.ToString("F2") : "—")
+                        </td>
+                        <td>
+                            @if (r.Status == "Finalizado")
+                            {
+                                <span class="badge-fin">Finalizado</span>
+                            }
+                            else
+                            {
+                                <span class="badge-and">Em andamento</span>
+                            }
+                        </td>
+                    </tr>
+                }
+                @if (!RegistrosFiltrados.Any())
+                {
+                    <tr>
+                        <td colspan="8">
+                            <div class="td-empty">
+                                <span class="bi bi-clock-history" style="font-size:32px;color:#2a2a4a;"></span>
+                                <div>Nenhum registro encontrado</div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+@code {
+    private string filtro = "";
+    private string filtroStatus = "";
+    private string filtroTipo = "";
+
+    private IEnumerable<Registro> RegistrosFiltrados =>
+        registros.Where(r =>
+            (string.IsNullOrEmpty(filtro) ||
+             r.Placa.Contains(filtro, StringComparison.OrdinalIgnoreCase) ||
+             r.Tipo.Contains(filtro, StringComparison.OrdinalIgnoreCase)) &&
+            (string.IsNullOrEmpty(filtroStatus) || r.Status == filtroStatus) &&
+            (string.IsNullOrEmpty(filtroTipo)   || r.Tipo   == filtroTipo)
+        ).OrderByDescending(r => r.Entrada);
+
+    private string IconeTipo(string tipo) => tipo switch
+    {
+        "Moto"        => "bi-bicycle",
+        "Caminhonete" => "bi-truck-front-fill",
+        "Van"         => "bi-truck",
+        _             => "bi-car-front-fill"
+    };
+
+    private List<Registro> registros = new()
+    {
+        new() { Placa="ABC1D23", Tipo="Carro",       Vaga="A-01", Entrada=DateTime.Now.AddHours(-3),  Saida=DateTime.Now.AddMinutes(-10), Duracao="2h 50min", Valor=30.00m, Status="Finalizado"   },
+        new() { Placa="XYZ9A87", Tipo="Moto",        Vaga="C-02", Entrada=DateTime.Now.AddHours(-1),  Saida=null,                         Duracao="1h 02min", Valor=0,      Status="Em andamento" },
+        new() { Placa="MNO3F56", Tipo="Caminhonete", Vaga="B-07", Entrada=DateTime.Now.AddHours(-6),  Saida=DateTime.Now.AddHours(-1),    Duracao="5h 00min", Valor=50.00m, Status="Finalizado"   },
+        new() { Placa="DEF4G78", Tipo="Carro",       Vaga="A-03", Entrada=DateTime.Now.AddHours(-2),  Saida=null,                         Duracao="2h 05min", Valor=0,      Status="Em andamento" },
+        new() { Placa="GHI5H90", Tipo="Van",         Vaga="B-10", Entrada=DateTime.Now.AddHours(-8),  Saida=DateTime.Now.AddHours(-2),    Duracao="6h 00min", Valor=60.00m, Status="Finalizado"   },
+        new() { Placa="JKL2M34", Tipo="Carro",       Vaga="A-05", Entrada=DateTime.Now.AddHours(-5),  Saida=DateTime.Now.AddHours(-3),    Duracao="2h 00min", Valor=20.00m, Status="Finalizado"   },
+        new() { Placa="PQR7S11", Tipo="Moto",        Vaga="C-01", Entrada=DateTime.Now.AddMinutes(-40),Saida=null,                        Duracao="40min",    Valor=0,      Status="Em andamento" },
+        new() { Placa="TUV8W22", Tipo="Carro",       Vaga="A-09", Entrada=DateTime.Now.AddHours(-4),  Saida=DateTime.Now.AddMinutes(-30), Duracao="3h 30min", Valor=35.00m, Status="Finalizado"   },
+    };
+
+    private class Registro
+    {
+        public string    Placa    { get; set; } = "";
+        public string    Tipo     { get; set; } = "";
+        public string    Vaga     { get; set; } = "";
+        public DateTime  Entrada  { get; set; }
+        public DateTime? Saida    { get; set; }
+        public string    Duracao  { get; set; } = "";
+        public decimal   Valor    { get; set; }
+        public string    Status   { get; set; } = "";
+    }
+}
+
+<style>
+    .hist-page {
+        padding: 28px;
+        min-height: 100vh;
+        background: #12122a;
+        font-family: 'Segoe UI', sans-serif;
+        box-sizing: border-box;
+    }
+
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+    }
+
+    .page-title {
+        color: #fff;
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0 0 4px;
+    }
+
+    .page-subtitle { color: #8888aa; font-size: 13px; }
+
+    .btn-export {
+        background: transparent;
+        border: 1px solid #2a2a4a;
+        color: #d0d0ee;
+        padding: 9px 18px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .btn-export:hover { background: #2a2a4a; color: #fff; }
+
+    /* Metrics */
+    .metrics-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+
+    .mcard {
+        background: #1e1e3a;
+        border: 1px solid #2a2a4a;
+        border-radius: 14px;
+        padding: 20px 24px;
+        text-align: center;
+    }
+
+    .mcard-val {
+        font-size: 26px;
+        font-weight: 700;
+        line-height: 1;
+        margin-bottom: 6px;
+    }
+
+    .mcard-label { color: #8888aa; font-size: 12px; }
+
+    /* Filtros */
+    .filter-bar {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+    }
+
+    .search-box {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #1e1e3a;
+        border: 1px solid #2a2a4a;
+        border-radius: 10px;
+        padding: 9px 14px;
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .search-box input {
+        background: transparent;
+        border: none;
+        outline: none;
+        color: #fff;
+        font-size: 14px;
+        flex: 1;
+    }
+
+    .search-box input::placeholder { color: #3a3a5a; }
+
+    .fselect {
+        background: #1e1e3a;
+        border: 1px solid #2a2a4a;
+        border-radius: 10px;
+        color: #d0d0ee;
+        padding: 9px 14px;
+        font-size: 13px;
+        outline: none;
+        cursor: pointer;
+    }
+
+    /* Table */
+    .table-card {
+        background: #1e1e3a;
+        border: 1px solid #2a2a4a;
+        border-radius: 14px;
+        overflow: hidden;
+    }
+
+    .hist-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .hist-table thead tr {
+        background: #12122a;
+        border-bottom: 1px solid #2a2a4a;
+    }
+
+    .hist-table th {
+        color: #8888aa;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 13px 18px;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .hist-table td {
+        padding: 13px 18px;
+        border-bottom: 1px solid #1a1a30;
+        vertical-align: middle;
+    }
+
+    .hist-table tbody tr:last-child td { border-bottom: none; }
+    .hist-table tbody tr:hover { background: #16163a; }
+
+    .placa-badge {
+        background: #12122a;
+        border: 1px solid #2a2a4a;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        padding: 4px 10px;
+        border-radius: 6px;
+        white-space: nowrap;
+    }
+
+    .tipo-badge {
+        display: inline-flex;
+        align-items: center;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 6px;
+        white-space: nowrap;
+    }
+
+    .tipo-badge.carro       { background:#1a3a6b; color:#60a5fa; }
+    .tipo-badge.moto        { background:#1a3a2a; color:#4ade80; }
+    .tipo-badge.caminhonete { background:#3a2a0a; color:#fbbf24; }
+    .tipo-badge.van         { background:#2a1a4a; color:#c084fc; }
+
+    .td-time {
+        color: #8888aa;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    .badge-fin {
+        background: #14532d;
+        color: #4ade80;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 20px;
+        white-space: nowrap;
+    }
+
+    .badge-and {
+        background: #3a2a0a;
+        color: #fbbf24;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 20px;
+        white-space: nowrap;
+    }
+
+    .td-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        padding: 48px;
+        color: #3a3a5a;
+        font-size: 13px;
+    }
+
+    @@media (max-width: 768px) {
+        .metrics-row { grid-template-columns: repeat(2, 1fr); }
+        .hist-table { font-size: 12px; }
+    }
+</style>

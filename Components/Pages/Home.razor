@@ -1,0 +1,653 @@
+﻿@page "/"
+
+<PageTitle>Dashboard</PageTitle>
+
+<div class="dash-page">
+
+    <!-- Header -->
+    <div class="dash-header">
+        <div class="dash-header-left">
+            <span class="bi bi-speedometer2 me-2" style="color:#4a7fff;font-size:20px;"></span>
+            <div>
+                <div class="dash-title">Dashboard</div>
+                <div class="dash-subtitle">Visão geral do estacionamento</div>
+            </div>
+        </div>
+        <div class="dash-header-right">
+            <span class="bi bi-calendar3 me-2" style="color:#8888aa;"></span>
+            <span class="dash-date">@DateTime.Now.ToString("dddd, dd 'de' MMMM", new System.Globalization.CultureInfo("pt-BR"))</span>
+            <div class="dash-clock">@DateTime.Now.ToString("HH:mm")</div>
+        </div>
+    </div>
+
+    <!-- Metric Cards -->
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-top">
+                <span class="metric-label">Veículos Ativos</span>
+                <span class="metric-icon" style="background:#1a3a6b;">
+                    <span class="bi bi-car-front-fill"></span>
+                </span>
+            </div>
+            <div class="metric-value">3</div>
+            <div class="metric-sub">no pátio agora</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-top">
+                <span class="metric-label">Entradas Hoje</span>
+                <span class="metric-icon" style="background:#0f4c2a;">
+                    <span class="bi bi-box-arrow-in-right"></span>
+                </span>
+            </div>
+            <div class="metric-value">12</div>
+            <div class="metric-sub">+3 na última hora</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-top">
+                <span class="metric-label">Faturamento Hoje</span>
+                <span class="metric-icon" style="background:#4a1f00;">
+                    <span class="bi bi-currency-dollar"></span>
+                </span>
+            </div>
+            <div class="metric-value" style="color:#22c55e;">R$ 240,00</div>
+            <div class="metric-sub">8 saídas finalizadas</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-top">
+                <span class="metric-label">Vagas Livres</span>
+                <span class="metric-icon" style="background:#2a1a4a;">
+                    <span class="bi bi-grid-fill"></span>
+                </span>
+            </div>
+            <div class="metric-value">47<span style="font-size:16px;color:#8888aa;">/50</span></div>
+            <div class="metric-sub">94% disponível</div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="dash-main">
+
+        <!-- Registrar Entrada -->
+        <div class="dash-card" style="flex:1.1;">
+            <div class="card-section-title">
+                <span class="bi bi-plus-circle-fill me-2" style="color:#4a7fff;"></span>
+                Registrar Entrada
+            </div>
+
+            <div class="form-group">
+                <label>Placa do Veículo</label>
+                <div class="plate-options">
+                    <label class="radio-opt">
+                        <input type="radio" name="placa" checked /> Mercosul
+                    </label>
+                    <label class="radio-opt">
+                        <input type="radio" name="placa" /> Antigo
+                    </label>
+                </div>
+            </div>
+
+            <div class="plate-box">
+                <div class="plate-top">
+                    <span class="plate-flag">🇧🇷</span>
+                    <span>BRASIL</span>
+                    <span class="plate-badge">MERCOSUL</span>
+                </div>
+                <input type="text" class="plate-input" placeholder="ABC1D23" maxlength="7" />
+            </div>
+
+            <div class="form-group">
+                <label>Tipo de Veículo</label>
+                <div class="vehicle-types">
+                    <button class="vtype-btn active">
+                        <span class="bi bi-car-front-fill"></span>
+                        <span>Carro</span>
+                    </button>
+                    <button class="vtype-btn">
+                        <span class="bi bi-bicycle"></span>
+                        <span>Moto</span>
+                    </button>
+                    <button class="vtype-btn">
+                        <span class="bi bi-truck-front-fill"></span>
+                        <span>Caminhonete</span>
+                    </button>
+                    <button class="vtype-btn">
+                        <span class="bi bi-truck"></span>
+                        <span>Van</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group" style="flex:1;">
+                    <label>Vaga (opcional)</label>
+                    <select class="dash-select">
+                        <option>Selecionar vaga</option>
+                        <option>A-01</option>
+                        <option>A-02</option>
+                        <option>B-01</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label>Mensalista</label>
+                    <div class="toggle-row-inline">
+                        <label class="toggle-switch">
+                            <input type="checkbox" />
+                            <span class="slider"></span>
+                        </label>
+                        <span class="toggle-text">Não</span>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-registrar">
+                <span class="bi bi-plus-lg me-2"></span> Registrar Entrada
+            </button>
+        </div>
+
+        <!-- Veículos no Pátio -->
+        <div class="dash-card" style="flex:1.4;">
+            <div class="card-section-title" style="justify-content:space-between;">
+                <div>
+                    <span class="bi bi-p-circle-fill me-2" style="color:#4a7fff;"></span>
+                    Veículos no Pátio
+                </div>
+                <span class="badge-count">3</span>
+            </div>
+
+            <div class="search-box">
+                <span class="bi bi-search"></span>
+                <input type="text" placeholder="Buscar placa..." />
+            </div>
+
+            <div class="veiculo-list">
+                <div class="veiculo-item">
+                    <div class="veiculo-plate">ABC1D23</div>
+                    <div class="veiculo-info">
+                        <span class="bi bi-car-front-fill me-1"></span> Carro · Vaga A-01
+                    </div>
+                    <div class="veiculo-time">2h 14min</div>
+                    <button class="btn-saida">Saída</button>
+                </div>
+                <div class="veiculo-item">
+                    <div class="veiculo-plate">XYZ9A87</div>
+                    <div class="veiculo-info">
+                        <span class="bi bi-bicycle me-1"></span> Moto · Vaga B-03
+                    </div>
+                    <div class="veiculo-time">45min</div>
+                    <button class="btn-saida">Saída</button>
+                </div>
+                <div class="veiculo-item">
+                    <div class="veiculo-plate">MNO3F56</div>
+                    <div class="veiculo-info">
+                        <span class="bi bi-car-front-fill me-1"></span> Carro · Vaga C-07
+                    </div>
+                    <div class="veiculo-time">5h 02min</div>
+                    <button class="btn-saida">Saída</button>
+                </div>
+                <div class="veiculo-empty" style="display:none;">
+                    <span class="bi bi-p-circle" style="font-size:40px;color:#2a2a4a;"></span>
+                    <div>Nenhum veículo no pátio</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    .dash-page {
+        padding: 24px 28px;
+        min-height: 100vh;
+        background: #12122a;
+        font-family: 'Segoe UI', sans-serif;
+        box-sizing: border-box;
+    }
+
+    /* Header */
+    .dash-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+    }
+
+    .dash-header-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .dash-title {
+        color: #fff;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .dash-subtitle {
+        color: #8888aa;
+        font-size: 12px;
+    }
+
+    .dash-header-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #8888aa;
+        font-size: 13px;
+    }
+
+    .dash-date {
+        text-transform: capitalize;
+    }
+
+    .dash-clock {
+        background: #1e1e3a;
+        color: #fff;
+        font-size: 15px;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 8px;
+        border: 1px solid #2a2a4a;
+        margin-left: 6px;
+    }
+
+    /* Metrics */
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .metric-card {
+        background: #1e1e3a;
+        border-radius: 14px;
+        padding: 18px 20px;
+        border: 1px solid #2a2a4a;
+    }
+
+    .metric-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .metric-label {
+        color: #8888aa;
+        font-size: 12px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+
+    .metric-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 15px;
+    }
+
+    .metric-value {
+        color: #fff;
+        font-size: 28px;
+        font-weight: 700;
+        line-height: 1;
+        margin-bottom: 4px;
+    }
+
+    .metric-sub {
+        color: #8888aa;
+        font-size: 11px;
+    }
+
+    /* Main */
+    .dash-main {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+    }
+
+    .dash-card {
+        background: #1e1e3a;
+        border-radius: 14px;
+        padding: 22px;
+        border: 1px solid #2a2a4a;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .card-section-title {
+        display: flex;
+        align-items: center;
+        color: #fff;
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    .badge-count {
+        background: #2563eb;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 9px;
+        border-radius: 20px;
+    }
+
+    /* Form */
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .form-group label {
+        color: #8888aa;
+        font-size: 11px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+
+    .form-row {
+        display: flex;
+        gap: 12px;
+    }
+
+    .plate-options {
+        display: flex;
+        gap: 16px;
+    }
+
+    .radio-opt {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #d0d0ee;
+        font-size: 13px;
+        cursor: pointer;
+    }
+
+    .radio-opt input[type="radio"] {
+        accent-color: #2563eb;
+    }
+
+    /* Plate */
+    .plate-box {
+        background: #12122a;
+        border: 1px solid #2a2a4a;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .plate-top {
+        background: #1a3a6b;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 14px;
+        font-size: 11px;
+        color: #a0c4ff;
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
+
+    .plate-badge {
+        margin-left: auto;
+        background: #2563eb;
+        color: #fff;
+        font-size: 10px;
+        padding: 2px 8px;
+        border-radius: 4px;
+    }
+
+    .plate-input {
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-size: 26px;
+        font-weight: 700;
+        letter-spacing: 6px;
+        text-align: center;
+        width: 100%;
+        padding: 14px;
+        outline: none;
+        text-transform: uppercase;
+        box-sizing: border-box;
+    }
+
+    .plate-input::placeholder {
+        color: #3a3a5a;
+    }
+
+    /* Vehicle types */
+    .vehicle-types {
+        display: flex;
+        gap: 8px;
+    }
+
+    .vtype-btn {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        background: #12122a;
+        border: 1px solid #2a2a4a;
+        border-radius: 10px;
+        color: #8888aa;
+        padding: 10px 6px;
+        font-size: 11px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .vtype-btn .bi {
+        font-size: 20px;
+    }
+
+    .vtype-btn:hover {
+        border-color: #4a7fff;
+        color: #fff;
+    }
+
+    .vtype-btn.active {
+        background: #1a3a6b;
+        border-color: #2563eb;
+        color: #fff;
+    }
+
+    /* Select */
+    .dash-select {
+        background: #12122a;
+        border: 1px solid #2a2a4a;
+        border-radius: 8px;
+        color: #d0d0ee;
+        padding: 9px 12px;
+        font-size: 13px;
+        outline: none;
+        width: 100%;
+    }
+
+    /* Toggle */
+    .toggle-row-inline {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 6px 0;
+    }
+
+    .toggle-text {
+        color: #d0d0ee;
+        font-size: 13px;
+    }
+
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 42px;
+        height: 24px;
+        flex-shrink: 0;
+    }
+
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        inset: 0;
+        background: #2a2a4a;
+        border-radius: 24px;
+        transition: 0.3s;
+    }
+
+    .slider::before {
+        content: "";
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        left: 3px;
+        top: 3px;
+        background: #fff;
+        border-radius: 50%;
+        transition: 0.3s;
+    }
+
+    .toggle-switch input:checked + .slider {
+        background: #2563eb;
+    }
+
+    .toggle-switch input:checked + .slider::before {
+        transform: translateX(18px);
+    }
+
+    /* Registrar btn */
+    .btn-registrar {
+        background: #22c55e;
+        border: none;
+        color: #fff;
+        padding: 13px;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+        width: 100%;
+        margin-top: 4px;
+    }
+
+    .btn-registrar:hover {
+        background: #16a34a;
+    }
+
+    /* Search */
+    .search-box {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #12122a;
+        border: 1px solid #2a2a4a;
+        border-radius: 8px;
+        padding: 9px 14px;
+        color: #8888aa;
+    }
+
+    .search-box input {
+        background: transparent;
+        border: none;
+        outline: none;
+        color: #fff;
+        font-size: 13px;
+        flex: 1;
+    }
+
+    .search-box input::placeholder {
+        color: #3a3a5a;
+    }
+
+    /* Vehicle list */
+    .veiculo-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .veiculo-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        background: #12122a;
+        border: 1px solid #2a2a4a;
+        border-radius: 10px;
+        padding: 12px 16px;
+    }
+
+    .veiculo-plate {
+        color: #fff;
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        min-width: 90px;
+    }
+
+    .veiculo-info {
+        color: #8888aa;
+        font-size: 12px;
+        flex: 1;
+    }
+
+    .veiculo-time {
+        color: #4a7fff;
+        font-size: 12px;
+        font-weight: 600;
+        min-width: 55px;
+        text-align: right;
+    }
+
+    .btn-saida {
+        background: transparent;
+        border: 1px solid #dc2626;
+        color: #dc2626;
+        padding: 5px 14px;
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .btn-saida:hover {
+        background: #dc2626;
+        color: #fff;
+    }
+
+    .veiculo-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 40px;
+        color: #3a3a5a;
+        font-size: 13px;
+    }
+
+    @@media (max-width: 900px) {
+        .metrics-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .dash-main {
+            flex-direction: column;
+        }
+    }
+</style>

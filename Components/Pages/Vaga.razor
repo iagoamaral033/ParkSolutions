@@ -1,0 +1,327 @@
+﻿@page "/vaga"
+
+<PageTitle>Home</PageTitle>
+
+<PageTitle>Vagas</PageTitle>
+
+<div class="vaga-page">
+
+    <!-- Header -->
+    <div class="vaga-header">
+        <div>
+            <h4 class="vaga-title">
+                <span class="bi bi-p-circle-fill me-2" style="color:#2563eb;"></span>
+                Gestão de Vagas
+            </h4>
+            <span class="vaga-subtitle">Configure e visualize as vagas do estacionamento</span>
+        </div>
+        <button class="btn-nova-vaga">
+            <span class="bi bi-plus-lg me-1"></span> Nova Vaga
+        </button>
+    </div>
+
+    <!-- Metrics -->
+    <div class="vaga-metrics">
+        <div class="vmetric-card">
+            <div class="vmetric-value" style="color:#2563eb;">@vagas.Count</div>
+            <div class="vmetric-label">Total de Vagas</div>
+        </div>
+        <div class="vmetric-card">
+            <div class="vmetric-value" style="color:#22c55e;">@vagas.Count(v => v.Status == "livre")</div>
+            <div class="vmetric-label">Disponíveis</div>
+        </div>
+        <div class="vmetric-card">
+            <div class="vmetric-value" style="color:#f97316;">@vagas.Count(v => v.Status == "ocupada")</div>
+            <div class="vmetric-label">Ocupadas</div>
+        </div>
+        <div class="vmetric-card">
+            <div class="vmetric-value" style="color:#6b7280;">@vagas.Count(v => v.Status == "inativa")</div>
+            <div class="vmetric-label">Inativas</div>
+        </div>
+    </div>
+
+    <!-- Setor A -->
+    <div class="vaga-setor">
+        <div class="setor-title">SETOR A — COBERTO</div>
+        <div class="vaga-grid">
+            @foreach (var v in vagas.Where(v => v.Setor == "A"))
+            {
+                <div class="vaga-card @v.Status" @onclick="() => ToggleVaga(v)">
+                    <span class="bi bi-car-front-fill vaga-icon"></span>
+                    <div class="vaga-nome">@v.Nome</div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Setor B -->
+    <div class="vaga-setor">
+        <div class="setor-title">SETOR B — DESCOBERTO</div>
+        <div class="vaga-grid">
+            @foreach (var v in vagas.Where(v => v.Setor == "B"))
+            {
+                <div class="vaga-card @v.Status" @onclick="() => ToggleVaga(v)">
+                    <span class="bi bi-car-front-fill vaga-icon"></span>
+                    <div class="vaga-nome">@v.Nome</div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Setor C -->
+    <div class="vaga-setor">
+        <div class="setor-title">SETOR C — MOTOS</div>
+        <div class="vaga-grid">
+            @foreach (var v in vagas.Where(v => v.Setor == "C"))
+            {
+                <div class="vaga-card @v.Status" @onclick="() => ToggleVaga(v)">
+                    <span class="bi bi-bicycle vaga-icon"></span>
+                    <div class="vaga-nome">@v.Nome</div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Legenda -->
+    <div class="vaga-legenda">
+        <span class="leg-item"><span class="leg-dot livre"></span>Disponível</span>
+        <span class="leg-item"><span class="leg-dot ocupada"></span>Ocupada</span>
+        <span class="leg-item"><span class="leg-dot inativa"></span>Inativa</span>
+    </div>
+
+</div>
+
+@code {
+    private List<VagaItem> vagas = new();
+
+    protected override void OnInitialized()
+    {
+        // Setor A
+        var nomesA = new[] {
+            "A-01","A-02","A-03","A-04","A-05","A-06","A-07","A-08","A-09","A-10",
+            "PCD-01","PCD-02","IDOSO 01","IDOSO 02","RESERVADO"
+        };
+        foreach (var n in nomesA)
+            vagas.Add(new VagaItem { Nome = n, Setor = "A", Status = "livre" });
+
+        // Setor B
+        var nomesB = new[] {
+            "B-01","B-02","B-03","B-04","B-05","B-06","B-07","B-08",
+            "B-09","B-10","B-11","B-12"
+        };
+        foreach (var n in nomesB)
+            vagas.Add(new VagaItem { Nome = n, Setor = "B", Status = "livre" });
+
+        // Setor C (motos)
+        var nomesC = new[] { "M-01","M-02","M-03","M-04","M-05" };
+        foreach (var n in nomesC)
+            vagas.Add(new VagaItem { Nome = n, Setor = "C", Status = "livre" });
+
+        // Simular algumas ocupadas/inativas
+        vagas[2].Status = "ocupada";
+        vagas[5].Status = "ocupada";
+        vagas[10].Status = "inativa";
+        vagas[17].Status = "ocupada";
+    }
+
+    private void ToggleVaga(VagaItem v)
+    {
+        v.Status = v.Status switch
+        {
+            "livre" => "ocupada",
+            "ocupada" => "inativa",
+            _ => "livre"
+        };
+    }
+
+    private class VagaItem
+    {
+        public string Nome { get; set; } = "";
+        public string Setor { get; set; } = "";
+        public string Status { get; set; } = "livre";
+    }
+}
+
+<style>
+    .vaga-page {
+        padding: 28px;
+        min-height: 100vh;
+        background: #12122a;
+        font-family: 'Segoe UI', sans-serif;
+        box-sizing: border-box;
+    }
+
+    /* Header */
+    .vaga-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+    }
+
+    .vaga-title {
+        color: #fff;
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0 0 4px;
+    }
+
+    .vaga-subtitle {
+        color: #8888aa;
+        font-size: 13px;
+    }
+
+    .btn-nova-vaga {
+        background: #fff;
+        color: #12122a;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .btn-nova-vaga:hover {
+        background: #e2e8f0;
+    }
+
+    /* Metrics */
+    .vaga-metrics {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .vmetric-card {
+        background: #1e1e3a;
+        border: 1px solid #2a2a4a;
+        border-radius: 14px;
+        padding: 20px 24px;
+        text-align: center;
+    }
+
+    .vmetric-value {
+        font-size: 32px;
+        font-weight: 700;
+        line-height: 1;
+        margin-bottom: 6px;
+    }
+
+    .vmetric-label {
+        color: #8888aa;
+        font-size: 13px;
+    }
+
+    /* Setor */
+    .vaga-setor {
+        background: #1e1e3a;
+        border: 1px solid #2a2a4a;
+        border-radius: 14px;
+        padding: 20px 22px;
+        margin-bottom: 18px;
+    }
+
+    .setor-title {
+        color: #d0d0ee;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin-bottom: 16px;
+        text-transform: uppercase;
+    }
+
+    .vaga-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    /* Vaga card */
+    .vaga-card {
+        width: 100px;
+        height: 90px;
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        cursor: pointer;
+        transition: transform 0.15s, box-shadow 0.15s;
+        border: 2px solid transparent;
+        user-select: none;
+    }
+
+    .vaga-card:hover {
+        transform: translateY(-2px);
+    }
+
+    .vaga-card.livre {
+        background: #0f2e1a;
+        border-color: #22c55e;
+    }
+
+    .vaga-card.ocupada {
+        background: #2e1515;
+        border-color: #ef4444;
+    }
+
+    .vaga-card.inativa {
+        background: #1e1e2a;
+        border-color: #3a3a5a;
+    }
+
+    .vaga-icon {
+        font-size: 22px;
+    }
+
+    .vaga-card.livre .vaga-icon { color: #22c55e; }
+    .vaga-card.ocupada .vaga-icon { color: #ef4444; }
+    .vaga-card.inativa .vaga-icon { color: #3a3a5a; }
+
+    .vaga-nome {
+        font-size: 11px;
+        font-weight: 700;
+        text-align: center;
+        letter-spacing: 0.5px;
+        line-height: 1.3;
+        padding: 0 4px;
+    }
+
+    .vaga-card.livre .vaga-nome { color: #22c55e; }
+    .vaga-card.ocupada .vaga-nome { color: #ef4444; }
+    .vaga-card.inativa .vaga-nome { color: #3a3a5a; }
+
+    /* Legenda */
+    .vaga-legenda {
+        display: flex;
+        gap: 24px;
+        margin-top: 8px;
+    }
+
+    .leg-item {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        color: #8888aa;
+        font-size: 13px;
+    }
+
+    .leg-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 3px;
+    }
+
+    .leg-dot.livre { background: #22c55e; }
+    .leg-dot.ocupada { background: #ef4444; }
+    .leg-dot.inativa { background: #3a3a5a; }
+
+    @@media (max-width: 768px) {
+        .vaga-metrics { grid-template-columns: repeat(2, 1fr); }
+        .vaga-card { width: 80px; height: 76px; }
+    }
+</style>

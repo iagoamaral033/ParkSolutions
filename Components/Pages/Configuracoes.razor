@@ -1,0 +1,423 @@
+﻿@page "/configuracoes"
+
+<PageTitle>Configurações</PageTitle>
+
+<div class="config-page">
+
+    <div class="config-header">
+        <div>
+            <h4 class="config-title">
+                <span class="bi bi-gear-fill me-2"></span>Configurações
+            </h4>
+            <span class="config-subtitle">Gerencie as preferências do sistema</span>
+        </div>
+    </div>
+
+    <div class="config-grid">
+
+        <!-- Perfil -->
+        <div class="config-card">
+            <div class="card-header-section">
+                <span class="card-icon" style="background:#1a3a6b;">
+                    <span class="bi bi-person-fill"></span>
+                </span>
+                <div>
+                    <div class="card-title">Perfil do Sistema</div>
+                    <div class="card-desc">Informações do estabelecimento</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Nome do Estacionamento</label>
+                <input type="text" class="config-input" value="Parking Central" />
+            </div>
+            <div class="form-group">
+                <label>CNPJ</label>
+                <input type="text" class="config-input" value="00.000.000/0001-00" />
+            </div>
+            <div class="form-group">
+                <label>Endereço</label>
+                <input type="text" class="config-input" value="Rua das Vagas, 100" />
+            </div>
+            <div class="form-group">
+                <label>Telefone</label>
+                <input type="text" class="config-input" value="(27) 99999-0000" />
+            </div>
+        </div>
+
+        <!-- Vagas -->
+        <div class="config-card">
+            <div class="card-header-section">
+                <span class="card-icon" style="background:#0f4c2a;">
+                    <span class="bi bi-grid-fill"></span>
+                </span>
+                <div>
+                    <div class="card-title">Vagas & Capacidade</div>
+                    <div class="card-desc">Configure o layout do pátio</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Total de Vagas</label>
+                <input type="number" class="config-input" value="50" />
+            </div>
+            <div class="form-group">
+                <label>Vagas para Motos</label>
+                <input type="number" class="config-input" value="10" />
+            </div>
+            <div class="form-group">
+                <label>Vagas PCD</label>
+                <input type="number" class="config-input" value="5" />
+            </div>
+            <div class="toggle-row">
+                <div>
+                    <div class="toggle-label">Reserva de vagas</div>
+                    <div class="toggle-desc">Permitir reserva antecipada</div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" checked />
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Tarifas -->
+        <div class="config-card">
+            <div class="card-header-section">
+                <span class="card-icon" style="background:#4a1f00;">
+                    <span class="bi bi-currency-dollar"></span>
+                </span>
+                <div>
+                    <div class="card-title">Tarifas</div>
+                    <div class="card-desc">Preços e tolerâncias</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Valor Hora (Carro)</label>
+                <div class="input-prefix">
+                    <span>R$</span>
+                    <input type="number" class="config-input" value="10.00" step="0.50" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Valor Hora (Moto)</label>
+                <div class="input-prefix">
+                    <span>R$</span>
+                    <input type="number" class="config-input" value="6.00" step="0.50" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Tolerância (minutos)</label>
+                <input type="number" class="config-input" value="15" />
+            </div>
+            <div class="form-group">
+                <label>Diária máxima</label>
+                <div class="input-prefix">
+                    <span>R$</span>
+                    <input type="number" class="config-input" value="60.00" step="1" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Notificações -->
+        <div class="config-card">
+            <div class="card-header-section">
+                <span class="card-icon" style="background:#2a1a4a;">
+                    <span class="bi bi-bell-fill"></span>
+                </span>
+                <div>
+                    <div class="card-title">Notificações</div>
+                    <div class="card-desc">Alertas e avisos do sistema</div>
+                </div>
+            </div>
+            <div class="toggle-row">
+                <div>
+                    <div class="toggle-label">Pátio cheio</div>
+                    <div class="toggle-desc">Alerta quando não houver vagas</div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" checked />
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="toggle-row">
+                <div>
+                    <div class="toggle-label">Veículo longo período</div>
+                    <div class="toggle-desc">Alerta após 12h estacionado</div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" checked />
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="toggle-row">
+                <div>
+                    <div class="toggle-label">Relatório diário</div>
+                    <div class="toggle-desc">Envio automático ao encerrar</div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" />
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="toggle-row">
+                <div>
+                    <div class="toggle-label">Som de alertas</div>
+                    <div class="toggle-desc">Notificações sonoras</div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" checked />
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="config-actions">
+        <button class="btn-cancel">Cancelar</button>
+        <button class="btn-save">
+            <span class="bi bi-check-lg me-1"></span> Salvar Configurações
+        </button>
+    </div>
+
+</div>
+
+<style>
+    .config-page {
+        padding: 28px;
+        min-height: 100vh;
+        background: #12122a;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .config-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 28px;
+    }
+
+    .config-title {
+        color: #ffffff;
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0 0 4px 0;
+    }
+
+    .config-subtitle {
+        color: #8888aa;
+        font-size: 13px;
+    }
+
+    .config-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-bottom: 28px;
+    }
+
+    .config-card {
+        background: #1e1e3a;
+        border-radius: 14px;
+        padding: 22px;
+        border: 1px solid #2a2a4a;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .card-header-section {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 4px;
+    }
+
+    .card-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        color: #fff;
+        flex-shrink: 0;
+    }
+
+    .card-title {
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    .card-desc {
+        color: #8888aa;
+        font-size: 12px;
+        margin-top: 2px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+        .form-group label {
+            color: #8888aa;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+    .config-input {
+        background: #12122a;
+        border: 1px solid #2a2a4a;
+        border-radius: 8px;
+        color: #ffffff;
+        padding: 9px 13px;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.2s;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+        .config-input:focus {
+            border-color: #4a7fff;
+        }
+
+    .input-prefix {
+        display: flex;
+        align-items: center;
+        background: #12122a;
+        border: 1px solid #2a2a4a;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: border-color 0.2s;
+    }
+
+        .input-prefix:focus-within {
+            border-color: #4a7fff;
+        }
+
+        .input-prefix span {
+            padding: 9px 10px;
+            color: #8888aa;
+            font-size: 13px;
+            background: #1e1e3a;
+            border-right: 1px solid #2a2a4a;
+        }
+
+        .input-prefix .config-input {
+            border: none;
+            border-radius: 0;
+            background: transparent;
+        }
+
+    .toggle-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 4px 0;
+        border-bottom: 1px solid #2a2a4a;
+    }
+
+        .toggle-row:last-child {
+            border-bottom: none;
+        }
+
+    .toggle-label {
+        color: #d0d0ee;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .toggle-desc {
+        color: #8888aa;
+        font-size: 12px;
+        margin-top: 2px;
+    }
+
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 42px;
+        height: 24px;
+        flex-shrink: 0;
+    }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        inset: 0;
+        background: #2a2a4a;
+        border-radius: 24px;
+        transition: 0.3s;
+    }
+
+        .slider::before {
+            content: "";
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            left: 3px;
+            top: 3px;
+            background: #fff;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+    .toggle-switch input:checked + .slider {
+        background: #2563eb;
+    }
+
+        .toggle-switch input:checked + .slider::before {
+            transform: translateX(18px);
+        }
+
+    .config-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+    }
+
+    .btn-cancel {
+        background: transparent;
+        border: 1px solid #2a2a4a;
+        color: #8888aa;
+        padding: 10px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+        .btn-cancel:hover {
+            background: #2a2a4a;
+            color: #fff;
+        }
+
+    .btn-save {
+        background: #2563eb;
+        border: none;
+        color: #fff;
+        padding: 10px 28px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+        .btn-save:hover {
+            background: #1d4fd8;
+        }
+</style>

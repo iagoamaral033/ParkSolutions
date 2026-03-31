@@ -1,0 +1,648 @@
+﻿
+@page "/veiculo"
+
+<PageTitle>Veículos</PageTitle>
+
+<div class="veiculo-page">
+
+    <!-- Header -->
+    <div class="page-header">
+        <div>
+            <h4 class="page-title">
+                <span class="bi bi-car-front-fill me-2" style="color:#2563eb;"></span>
+                Gestão de Veículos
+            </h4>
+            <span class="page-subtitle">Cadastre e gerencie os veículos do sistema</span>
+        </div>
+        <button class="btn-novo" @onclick="AbrirModal">
+            <span class="bi bi-plus-lg me-1"></span> Novo Veículo
+        </button>
+    </div>
+
+    <!-- Metrics -->
+    <div class="metrics-row">
+        <div class="mcard">
+            <div class="mcard-val" style="color:#2563eb;">@veiculos.Count</div>
+            <div class="mcard-label">Total Cadastrados</div>
+        </div>
+        <div class="mcard">
+            <div class="mcard-val" style="color:#22c55e;">@veiculos.Count(v => v.Tipo == "Carro")</div>
+            <div class="mcard-label">Carros</div>
+        </div>
+        <div class="mcard">
+            <div class="mcard-val" style="color:#f97316;">@veiculos.Count(v => v.Tipo == "Moto")</div>
+            <div class="mcard-label">Motos</div>
+        </div>
+        <div class="mcard">
+            <div class="mcard-val" style="color:#a855f7;">@veiculos.Count(v => v.Mensalista)</div>
+            <div class="mcard-label">Mensalistas</div>
+        </div>
+    </div>
+
+    <!-- Busca -->
+    <div class="search-bar">
+        <span class="bi bi-search" style="color:#8888aa;"></span>
+        <input type="text" placeholder="Buscar por placa ou proprietário..."
+               @bind="filtro" @bind:event="oninput" />
+        <select @bind="filtroTipo" class="filter-select">
+            <option value="">Todos os tipos</option>
+            <option value="Carro">Carro</option>
+            <option value="Moto">Moto</option>
+            <option value="Caminhonete">Caminhonete</option>
+            <option value="Van">Van</option>
+        </select>
+    </div>
+
+    <!-- Tabela -->
+    <div class="table-card">
+        <table class="veiculo-table">
+            <thead>
+                <tr>
+                    <th>Placa</th>
+                    <th>Proprietário</th>
+                    <th>Tipo</th>
+                    <th>Cor</th>
+                    <th>Modelo</th>
+                    <th>Mensalista</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var v in VeiculosFiltrados)
+                {
+                    <tr>
+                        <td><span class="placa-badge">@v.Placa</span></td>
+                        <td class="td-main">@v.Proprietario</td>
+                        <td>
+                            <span class="tipo-badge @v.Tipo.ToLower()">
+                                <span class="bi @IconeTipo(v.Tipo) me-1"></span>@v.Tipo
+                            </span>
+                        </td>
+                        <td>
+                            <div style="display:flex;align-items:center;gap:7px;">
+                                <span style="width:12px;height:12px;border-radius:3px;background:@v.CorHex;display:inline-block;border:1px solid #3a3a5a;"></span>
+                                <span style="color:#d0d0ee;font-size:13px;">@v.Cor</span>
+                            </div>
+                        </td>
+                        <td style="color:#d0d0ee;font-size:13px;">@v.Modelo</td>
+                        <td>
+                            @if (v.Mensalista)
+                            {
+                                <span class="badge-mensalista">Sim</span>
+                            }
+                            else
+                            {
+                                <span class="badge-avulso">Não</span>
+                            }
+                        </td>
+                        <td>
+                            <div style="display:flex;gap:8px;">
+                                <button class="btn-edit" title="Editar">
+                                    <span class="bi bi-pencil-fill"></span>
+                                </button>
+                                <button class="btn-del" title="Excluir" @onclick="() => Excluir(v)">
+                                    <span class="bi bi-trash-fill"></span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (!VeiculosFiltrados.Any())
+                {
+                    <tr>
+                        <td colspan="7" class="td-empty">
+                            <span class="bi bi-car-front" style="font-size:32px;color:#2a2a4a;"></span>
+                            <div>Nenhum veículo encontrado</div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal Novo Veículo -->
+    @if (modalAberto)
+    {
+        <div class="modal-overlay" @onclick="FecharModal">
+            <div class="modal-box" @onclick:stopPropagation="true">
+                <div class="modal-header">
+                    <span class="modal-title">
+                        <span class="bi bi-car-front-fill me-2" style="color:#2563eb;"></span>
+                        Novo Veículo
+                    </span>
+                    <button class="modal-close" @onclick="FecharModal">
+                        <span class="bi bi-x-lg"></span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mform-row">
+                        <div class="mform-group">
+                            <label>Placa</label>
+                            <input class="minput" placeholder="ABC1D23" @bind="novo.Placa" maxlength="7" style="text-transform:uppercase;" />
+                        </div>
+                        <div class="mform-group">
+                            <label>Tipo</label>
+                            <select class="minput" @bind="novo.Tipo">
+                                <option>Carro</option>
+                                <option>Moto</option>
+                                <option>Caminhonete</option>
+                                <option>Van</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mform-group">
+                        <label>Proprietário</label>
+                        <input class="minput" placeholder="Nome completo" @bind="novo.Proprietario" />
+                    </div>
+                    <div class="mform-row">
+                        <div class="mform-group">
+                            <label>Modelo</label>
+                            <input class="minput" placeholder="Ex: Gol, Civic..." @bind="novo.Modelo" />
+                        </div>
+                        <div class="mform-group">
+                            <label>Cor</label>
+                            <input class="minput" placeholder="Ex: Prata" @bind="novo.Cor" />
+                        </div>
+                    </div>
+                    <div class="mform-toggle">
+                        <label class="toggle-switch">
+                            <input type="checkbox" @bind="novo.Mensalista" />
+                            <span class="slider"></span>
+                        </label>
+                        <div>
+                            <div style="color:#d0d0ee;font-size:14px;font-weight:500;">Mensalista</div>
+                            <div style="color:#8888aa;font-size:12px;">Veículo com contrato mensal</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn-cancel-modal" @onclick="FecharModal">Cancelar</button>
+                    <button class="btn-save-modal" @onclick="SalvarVeiculo">
+                        <span class="bi bi-check-lg me-1"></span> Salvar
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+
+</div>
+
+@code {
+    private string filtro = "";
+    private string filtroTipo = "";
+    private bool modalAberto = false;
+    private VeiculoItem novo = new();
+
+    private IEnumerable<VeiculoItem> VeiculosFiltrados =>
+        veiculos.Where(v =>
+            (string.IsNullOrEmpty(filtro) ||
+             v.Placa.Contains(filtro, StringComparison.OrdinalIgnoreCase) ||
+             v.Proprietario.Contains(filtro, StringComparison.OrdinalIgnoreCase)) &&
+            (string.IsNullOrEmpty(filtroTipo) || v.Tipo == filtroTipo)
+        );
+
+    private void AbrirModal() { novo = new(); modalAberto = true; }
+    private void FecharModal() => modalAberto = false;
+
+    private void SalvarVeiculo()
+    {
+        if (!string.IsNullOrWhiteSpace(novo.Placa))
+        {
+            novo.Placa = novo.Placa.ToUpper();
+            novo.CorHex = "#6b7280";
+            veiculos.Add(novo);
+        }
+        FecharModal();
+    }
+
+    private void Excluir(VeiculoItem v) => veiculos.Remove(v);
+
+    private string IconeTipo(string tipo) => tipo switch
+    {
+        "Moto" => "bi-bicycle",
+        "Caminhonete" => "bi-truck-front-fill",
+        "Van" => "bi-truck",
+        _ => "bi-car-front-fill"
+    };
+
+    private List<VeiculoItem> veiculos = new()
+    {
+        new() { Placa="ABC1D23", Proprietario="Carlos Silva",    Tipo="Carro",       Cor="Prata",   CorHex="#9ca3af", Modelo="Civic",    Mensalista=true  },
+        new() { Placa="XYZ9A87", Proprietario="Ana Souza",      Tipo="Moto",        Cor="Preta",   CorHex="#1f2937", Modelo="CB 300",   Mensalista=false },
+        new() { Placa="MNO3F56", Proprietario="João Pereira",   Tipo="Caminhonete", Cor="Branca",  CorHex="#f9fafb", Modelo="Hilux",    Mensalista=false },
+        new() { Placa="DEF4G78", Proprietario="Maria Lima",     Tipo="Carro",       Cor="Vermelha",CorHex="#dc2626", Modelo="Gol",      Mensalista=true  },
+        new() { Placa="GHI5H90", Proprietario="Pedro Alves",    Tipo="Van",         Cor="Cinza",   CorHex="#6b7280", Modelo="Sprinter", Mensalista=false },
+    };
+
+    private class VeiculoItem
+    {
+        public string Placa       { get; set; } = "";
+        public string Proprietario{ get; set; } = "";
+        public string Tipo        { get; set; } = "Carro";
+        public string Cor         { get; set; } = "";
+        public string CorHex      { get; set; } = "#6b7280";
+        public string Modelo      { get; set; } = "";
+        public bool   Mensalista  { get; set; }
+    }
+}
+
+<style>
+    .veiculo-page {
+        padding: 28px;
+        min-height: 100vh;
+        background: #12122a;
+        font-family: 'Segoe UI', sans-serif;
+        box-sizing: border-box;
+    }
+
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+    }
+
+    .page-title {
+        color: #fff;
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0 0 4px;
+    }
+
+    .page-subtitle {
+        color: #8888aa;
+        font-size: 13px;
+    }
+
+    .btn-novo {
+        background: #2563eb;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .btn-novo:hover { background: #1d4fd8; }
+
+    /* Metrics */
+    .metrics-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+
+    .mcard {
+        background: #1e1e3a;
+        border: 1px solid #2a2a4a;
+        border-radius: 14px;
+        padding: 20px 24px;
+        text-align: center;
+    }
+
+    .mcard-val {
+        font-size: 30px;
+        font-weight: 700;
+        line-height: 1;
+        margin-bottom: 6px;
+    }
+
+    .mcard-label {
+        color: #8888aa;
+        font-size: 12px;
+    }
+
+    /* Search */
+    .search-bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: #1e1e3a;
+        border: 1px solid #2a2a4a;
+        border-radius: 10px;
+        padding: 10px 16px;
+        margin-bottom: 16px;
+    }
+
+    .search-bar input {
+        background: transparent;
+        border: none;
+        outline: none;
+        color: #fff;
+        font-size: 14px;
+        flex: 1;
+    }
+
+    .search-bar input::placeholder { color: #3a3a5a; }
+
+    .filter-select {
+        background: #12122a;
+        border: 1px solid #2a2a4a;
+        border-radius: 7px;
+        color: #d0d0ee;
+        padding: 6px 10px;
+        font-size: 13px;
+        outline: none;
+    }
+
+    /* Table */
+    .table-card {
+        background: #1e1e3a;
+        border: 1px solid #2a2a4a;
+        border-radius: 14px;
+        overflow: hidden;
+    }
+
+    .veiculo-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .veiculo-table thead tr {
+        background: #12122a;
+        border-bottom: 1px solid #2a2a4a;
+    }
+
+    .veiculo-table th {
+        color: #8888aa;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 13px 18px;
+        text-align: left;
+    }
+
+    .veiculo-table td {
+        padding: 14px 18px;
+        border-bottom: 1px solid #1a1a30;
+        vertical-align: middle;
+    }
+
+    .veiculo-table tbody tr:last-child td { border-bottom: none; }
+
+    .veiculo-table tbody tr:hover { background: #16163a; }
+
+    .placa-badge {
+        background: #12122a;
+        border: 1px solid #2a2a4a;
+        color: #fff;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        padding: 4px 10px;
+        border-radius: 6px;
+    }
+
+    .td-main {
+        color: #d0d0ee;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .tipo-badge {
+        display: inline-flex;
+        align-items: center;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 6px;
+    }
+
+    .tipo-badge.carro       { background:#1a3a6b; color:#60a5fa; }
+    .tipo-badge.moto        { background:#1a3a2a; color:#4ade80; }
+    .tipo-badge.caminhonete { background:#3a2a0a; color:#fbbf24; }
+    .tipo-badge.van         { background:#2a1a4a; color:#c084fc; }
+
+    .badge-mensalista {
+        background: #14532d;
+        color: #4ade80;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 6px;
+    }
+
+    .badge-avulso {
+        background: #1e1e2a;
+        color: #6b7280;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 6px;
+    }
+
+    .btn-edit {
+        background: #1a3a6b;
+        border: none;
+        color: #60a5fa;
+        width: 32px;
+        height: 32px;
+        border-radius: 7px;
+        cursor: pointer;
+        font-size: 13px;
+        transition: 0.2s;
+    }
+
+    .btn-edit:hover { background: #2563eb; color: #fff; }
+
+    .btn-del {
+        background: #2e1515;
+        border: none;
+        color: #ef4444;
+        width: 32px;
+        height: 32px;
+        border-radius: 7px;
+        cursor: pointer;
+        font-size: 13px;
+        transition: 0.2s;
+    }
+
+    .btn-del:hover { background: #dc2626; color: #fff; }
+
+    .td-empty {
+        text-align: center;
+        padding: 48px !important;
+        color: #3a3a5a;
+        font-size: 13px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* Modal */
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .modal-box {
+        background: #1e1e3a;
+        border: 1px solid #2a2a4a;
+        border-radius: 16px;
+        width: 480px;
+        max-width: 95vw;
+        overflow: hidden;
+    }
+
+    .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 22px;
+        border-bottom: 1px solid #2a2a4a;
+    }
+
+    .modal-title {
+        color: #fff;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .modal-close {
+        background: transparent;
+        border: none;
+        color: #8888aa;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .modal-close:hover { color: #fff; }
+
+    .modal-body {
+        padding: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .mform-row {
+        display: flex;
+        gap: 12px;
+    }
+
+    .mform-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        flex: 1;
+    }
+
+    .mform-group label {
+        color: #8888aa;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+
+    .minput {
+        background: #12122a;
+        border: 1px solid #2a2a4a;
+        border-radius: 8px;
+        color: #fff;
+        padding: 9px 13px;
+        font-size: 14px;
+        outline: none;
+        width: 100%;
+        box-sizing: border-box;
+        transition: border-color 0.2s;
+    }
+
+    .minput:focus { border-color: #2563eb; }
+
+    .mform-toggle {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 4px 0;
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 16px 22px;
+        border-top: 1px solid #2a2a4a;
+    }
+
+    .btn-cancel-modal {
+        background: transparent;
+        border: 1px solid #2a2a4a;
+        color: #8888aa;
+        padding: 9px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .btn-cancel-modal:hover { background: #2a2a4a; color: #fff; }
+
+    .btn-save-modal {
+        background: #2563eb;
+        border: none;
+        color: #fff;
+        padding: 9px 22px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .btn-save-modal:hover { background: #1d4fd8; }
+
+    /* Toggle */
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 42px;
+        height: 24px;
+        flex-shrink: 0;
+    }
+
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        inset: 0;
+        background: #2a2a4a;
+        border-radius: 24px;
+        transition: 0.3s;
+    }
+
+    .slider::before {
+        content: "";
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        left: 3px;
+        top: 3px;
+        background: #fff;
+        border-radius: 50%;
+        transition: 0.3s;
+    }
+
+    .toggle-switch input:checked + .slider { background: #2563eb; }
+    .toggle-switch input:checked + .slider::before { transform: translateX(18px); }
+
+    @@media (max-width: 768px) {
+        .metrics-row { grid-template-columns: repeat(2, 1fr); }
+        .mform-row { flex-direction: column; }
+    }
+</style>
