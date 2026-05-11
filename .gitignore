@@ -1,0 +1,41 @@
+﻿# Build
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Rider
+.idea/
+
+# VS Code
+.vscode/
+
+# Arquivos temporários
+*.log
+*.tmp
+
+# Configurações locais
+appsettings.Development.json
+
+# Pacotes
+node_modules/
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# Entity Framework
+Migrations/
+
+# Publicações
+publish/
+
+# Certificados
+*.pfx
+*.snk
+
+# Arquivos de cache
+*.cache
