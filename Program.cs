@@ -1,24 +1,7 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
-using ParkSolutions.Components;
 using Microsoft.EntityFrameworkCore;
 using ParkSolutions.Data;
 
 var builder = WebApplication.CreateBuilder(args);
-
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-})
-.AddCookie()
-.AddGoogle(options =>
-{
-    options.ClientId = builder.Configuration["Google:ClientId"];
-    options.ClientSecret = builder.Configuration["Google:ClientSecret"];
-});
-
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
@@ -29,23 +12,18 @@ builder.Services.AddDbContext<ParkContext>(options =>
 
 var app = builder.Build();
 
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
     app.UseHsts();
 }
 
-app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
+app.MapStaticAssets();
+app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseAntiforgery();
 
-app.MapStaticAssets();
-app.MapRazorComponents<App>()
+app.MapRazorComponents<ParkSolutions.Components.App>()
     .AddInteractiveServerRenderMode();
 
 app.Run();
